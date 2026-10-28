@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My Photo Gallery</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Main page -->
+  <div class="wrap">
+
+    <header>
+      <div>
+        <h1>My Photo Gallery</h1>
+        <p class="sub" id="stats">Loading…</p>
+      </div>
+      <button class="btn primary" id="addBtn">Upload photos</button>
+    </header>
+
+    <!-- Upload area -->
+    <div id="drop" tabindex="0" role="button" aria-label="Upload photos">
+      <strong>Drop photos here</strong>
+      <span>
+        or click to choose files. Photos you upload here stay on your device only.
+        Photos added to the site’s images folder are shown to everyone.
+      </span>
+    </div>
+    <input type="file" id="file" accept="image/*" multiple hidden>
+
+    <!-- Search, filter and sort -->
+    <div class="bar">
+      <input type="search" id="q" placeholder="Search captions" aria-label="Search captions">
+      <button class="btn" id="favF" aria-pressed="false">Favorites</button>
+      <button class="btn" id="sortB">Newest first</button>
+      <button class="btn danger" id="clearB">Delete my uploads</button>
+    </div>
+
+    <!-- Photos -->
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty" hidden>No photos to show yet. Upload your first one above.</div>
+
+  </div>
+
+  <!-- Full-screen viewer -->
+  <div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <div class="stage">
+      <button class="nav l" id="prev" aria-label="Previous photo">‹</button>
+      <img id="lbImg" alt="">
+      <button class="nav r" id="next" aria-label="Next photo">›</button>
+    </div>
+
+    <div class="tools">
+      <span class="count" id="count"></span>
+      <input id="capIn" placeholder="Add a caption" aria-label="Caption">
+      <button class="btn" id="zoom">Zoom</button>
+      <button class="btn" id="favB">Favorite</button>
+      <button class="btn" id="dl">Download</button>
+      <button class="btn" id="del">Delete</button>
+      <button class="btn" id="close">Close</button>
+    </div>
+  </div>
+
+  <!-- Small message that appears at the bottom -->
+  <div id="toast" role="status"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

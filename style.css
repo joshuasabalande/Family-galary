@@ -1,0 +1,415 @@
+/* ==========================================================================
+   Photo Gallery styles
+   Sections: 1. Theme  2. Base  3. Layout  4. Buttons  5. Upload  6. Grid
+             7. Viewer  8. Toast  9. Accessibility
+   ========================================================================== */
+
+
+/* 1. Theme ---------------------------------------------------------------- */
+
+:root {
+  --bg: #f4f9ff;
+  --surface: #ffffff;
+  --ink: #12263f;
+  --muted: #5d7390;
+  --line: #d6e6f7;
+  --accent: #3a8fe0;
+  --accent-ink: #ffffff;
+  --soft: #e3f0fd;
+  --danger: #d64545;
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Dark theme: follows the device unless the page forces light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1826;
+    --surface: #15243a;
+    --ink: #e8f1fc;
+    --muted: #93a9c5;
+    --line: #233a58;
+    --accent: #5aa7f0;
+    --accent-ink: #08121f;
+    --soft: #1b3050;
+    --danger: #ff7a7a;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d1826;
+  --surface: #15243a;
+  --ink: #e8f1fc;
+  --muted: #93a9c5;
+  --line: #233a58;
+  --accent: #5aa7f0;
+  --accent-ink: #08121f;
+  --soft: #1b3050;
+  --danger: #ff7a7a;
+  color-scheme: dark;
+}
+
+
+/* 2. Base ----------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+
+/* 3. Layout --------------------------------------------------------------- */
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 80px;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.sub {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.bar input[type="search"] {
+  flex: 1 1 180px;
+  min-width: 0;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.empty {
+  padding: 40px 10px;
+  color: var(--muted);
+  text-align: center;
+}
+
+
+/* 4. Buttons -------------------------------------------------------------- */
+
+.btn {
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s, background 0.12s;
+}
+
+.btn:hover {
+  background: var(--soft);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn.primary:hover {
+  filter: brightness(1.06);
+}
+
+.btn.on {
+  border-color: var(--accent);
+  background: var(--soft);
+}
+
+.btn.danger {
+  color: var(--danger);
+}
+
+
+/* 5. Upload area ---------------------------------------------------------- */
+
+#drop {
+  margin-bottom: 22px;
+  padding: 28px 16px;
+  border: 2px dashed var(--line);
+  border-radius: 20px;
+  background: var(--surface);
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+#drop.over {
+  border-color: var(--accent);
+  background: var(--soft);
+}
+
+#drop strong {
+  display: block;
+  font-size: 1.15rem;
+}
+
+#drop span {
+  color: var(--muted);
+}
+
+
+/* 6. Photo grid ----------------------------------------------------------- */
+
+.grid {
+  columns: 3 220px;
+  column-gap: 12px;
+}
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: var(--soft);
+  overflow: hidden;
+  cursor: zoom-in;
+  break-inside: avoid;
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.3s;
+}
+
+.card:hover img {
+  transform: scale(1.03);
+}
+
+.card .cap {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 22px 10px 8px;
+  background: linear-gradient(transparent, rgba(8, 20, 36, 0.7));
+  color: #ffffff;
+  font-size: 0.85rem;
+  text-align: left;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.card:hover .cap,
+.card:focus-visible .cap {
+  opacity: 1;
+}
+
+.heart {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #12263f;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.heart.on {
+  color: #e0446a;
+}
+
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #12263f;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+
+/* 7. Full-screen viewer --------------------------------------------------- */
+
+#lb {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  background: rgba(6, 14, 26, 0.92);
+}
+
+#lb.open {
+  display: flex;
+}
+
+#lb .stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 12px 48px;
+}
+
+#lb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  transition: transform 0.2s;
+  touch-action: none;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.nav.l {
+  left: 6px;
+}
+
+.nav.r {
+  right: 6px;
+}
+
+#lb .tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px 14px;
+  color: #ffffff;
+}
+
+#lb .tools input {
+  flex: 1 1 200px;
+  max-width: 340px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+#lb .tools input[readonly] {
+  opacity: 0.7;
+}
+
+#lb .tools .btn {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+#lb .count {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+
+/* 8. Toast message -------------------------------------------------------- */
+
+#toast {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  z-index: 30;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 0.2s;
+}
+
+#toast.show {
+  opacity: 1;
+}
+
+
+/* 9. Accessibility -------------------------------------------------------- */
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
