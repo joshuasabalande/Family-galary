@@ -33,6 +33,7 @@
   var cloud = [];           // Photos uploaded to Cloudinary (seen by everyone)
   var photos = [];          // Photos uploaded on this device
   var favs = {};            // Favorites of shared photos, kept in localStorage
+  var tokens = {};          // Delete tokens for photos this visitor just uploaded
   var view = [];            // Photos currently shown (after search / filter / sort)
   var urls = {};            // Object URLs for uploaded photos
   var db = null;
@@ -122,6 +123,42 @@
     if ($("lb").classList.contains("open")) {
       syncViewer();
     }
+  }
+
+
+  /* ---------- Delete tokens (so you can delete your own new uploads) ------ */
+
+  var TOKEN_LIFETIME = 9 * 60 * 1000;   // Cloudinary tokens last 10 minutes
+
+  function loadTokens() {
+    try {
+      tokens = JSON.parse(localStorage.getItem("gallery-delete-tokens") || "{}");
+    } catch (error) {
+      tokens = {};
+    }
+
+    // Forget tokens that have expired
+    Object.keys(tokens).forEach(function (id) {
+      if (tokens[id].until < Date.now()) {
+        delete tokens[id];
+      }
+    });
+  }
+
+  function saveTokens() {
+    try {
+      localStorage.setItem("gallery-delete-tokens", JSON.stringify(tokens));
+    } catch (error) {
+      // Storage unavailable: the delete button just disappears after a reload.
+    }
+  }
+
+  function canDelete(photo) {
+    if (!photo.shared) {
+      return true;    // Uploaded on this device only
+    }
+
+    return !!(photo.deleteToken && photo.deleteUntil > Date.now());
   }
 
 
@@ -289,16 +326,25 @@
     var path = "v" + item.version + "/" + item.public_id + "." + item.format;
     var fileName = item.public_id.split("/").pop();
     var context = item.context && (item.context.custom || item.context);
+    var id = "c-" + item.public_id;
+
+    // A photo uploaded a moment ago can be deleted by the person who uploaded it
+    if (item.delete_token) {
+      tokens[id] = { token: item.delete_token, until: Date.now() + TOKEN_LIFETIME };
+      saveTokens();
+    }
 
     return {
-      id: "c-" + item.public_id,
+      id: id,
       name: fileName + "." + item.format,
       caption: (context && context.caption) || niceName(fileName),
-      fav: !!favs["c-" + item.public_id],
+      fav: !!favs[id],
       added: Date.parse(item.created_at) || Date.now(),
       thumb: base + "f_auto,q_auto,w_700/" + path,
       src: base + "f_auto,q_auto,w_2000/" + path,
       download: base + "fl_attachment/" + path,
+      deleteToken: tokens[id] ? tokens[id].token : "",
+      deleteUntil: tokens[id] ? tokens[id].until : 0,
       shared: true
     };
   }
@@ -354,7 +400,8 @@
       public_id: data.public_id,
       version: data.version,
       format: data.format,
-      created_at: data.created_at
+      created_at: data.created_at,
+      delete_token: data.delete_token
     });
   }
 
@@ -572,7 +619,7 @@
 
     $("capIn").value = photo.caption;
     $("capIn").readOnly = !!photo.shared;
-    $("del").hidden = !!photo.shared;
+    $("del").hidden = !canDelete(photo);
     $("count").textContent = (index + 1) + " of " + view.length;
     $("favB").textContent = photo.fav ? "Unfavorite" : "Favorite";
     $("favB").classList.toggle("on", photo.fav);
@@ -603,14 +650,46 @@
     link.remove();
   }
 
-  function deleteCurrent() {
+  async function deleteCloudPhoto(photo) {
+    var form = new FormData();
+
+    form.append("token", photo.deleteToken);
+
+    var response = await fetch(
+      "https://api.cloudinary.com/v1_1/" + CONFIG.cloudName + "/delete_by_token",
+      { method: "POST", body: form }
+    );
+
+    if (!response.ok) {
+      throw new Error("Delete failed");
+    }
+
+    cloud = cloud.filter(function (item) {
+      return item.id !== photo.id;
+    });
+
+    delete tokens[photo.id];
+    saveTokens();
+  }
+
+  async function deleteCurrent() {
     var photo = view[index];
 
-    if (!photo || photo.shared || !confirm("Delete this photo?")) {
+    if (!photo || !canDelete(photo) || !confirm("Delete this photo?")) {
       return;
     }
 
-    removePhoto(photo);
+    try {
+      if (photo.shared) {
+        await deleteCloudPhoto(photo);
+      } else {
+        removePhoto(photo);
+      }
+    } catch (error) {
+      showToast("Could not delete this photo. Please try again.");
+      return;
+    }
+
     render();
 
     if (!view.length) {
@@ -792,6 +871,7 @@
   bindUploadEvents();
   bindToolbarEvents();
   loadFavs();
+  loadTokens();
 
   openDB()
     .then(dbAll)
