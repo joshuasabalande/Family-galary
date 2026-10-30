@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>My Nature Gallery</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Main page -->
+  <div class="wrap">
+
+    <!-- Header with a painted landscape -->
+    <header class="hero">
+      <svg class="scene" viewBox="0 0 1200 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop class="sky-top" offset="0"></stop>
+            <stop class="sky-bottom" offset="1"></stop>
+          </linearGradient>
+
+          <symbol id="pine" viewBox="0 0 40 70">
+            <path d="M20 0 L33 26 H26 L38 48 H24 V70 H16 V48 H2 L14 26 H7 Z"></path>
+          </symbol>
+        </defs>
+
+        <rect width="1200" height="360" fill="url(#sky)"></rect>
+
+        <circle class="sun-glow" cx="760" cy="112" r="84"></circle>
+        <circle class="sun" cx="760" cy="112" r="44"></circle>
+
+        <g class="clouds">
+          <ellipse cx="470" cy="96" rx="70" ry="16"></ellipse>
+          <ellipse cx="520" cy="84" rx="46" ry="14"></ellipse>
+          <ellipse cx="650" cy="62" rx="60" ry="13"></ellipse>
+          <ellipse cx="690" cy="52" rx="38" ry="11"></ellipse>
+        </g>
+
+        <path class="hill-1" d="M0 250 L130 170 L240 235 L380 140 L520 240 L640 190 L780 250 L900 175 L1040 245 L1200 190 V360 H0 Z"></path>
+        <path class="hill-2" d="M0 290 C150 230 300 250 450 280 C600 310 750 240 900 265 C1050 290 1120 260 1200 275 V360 H0 Z"></path>
+
+        <g class="tree">
+          <use href="#pine" x="380" y="248" width="40" height="70"></use>
+          <use href="#pine" x="422" y="264" width="30" height="52"></use>
+          <use href="#pine" x="690" y="250" width="38" height="66"></use>
+          <use href="#pine" x="730" y="268" width="28" height="48"></use>
+        </g>
+
+        <path class="hill-3" d="M0 330 C200 290 380 320 560 325 C760 332 980 295 1200 320 V360 H0 Z"></path>
+      </svg>
+
+      <div class="hero-text">
+        <h1>My Nature Gallery</h1>
+        <p class="sub" id="stats">Loading…</p>
+      </div>
+
+      <button class="btn primary" id="addBtn">Upload photos</button>
+    </header>
+
+    <!-- Upload area -->
+    <div id="drop" tabindex="0" role="button" aria-label="Upload photos">
+      <svg class="leaf" viewBox="0 0 48 48" aria-hidden="true">
+        <path d="M8 40 C8 18 22 8 40 8 C40 28 30 40 12 40 Z"></path>
+        <path d="M8 40 L28 20" fill="none"></path>
+      </svg>
+      <strong>Drop photos here</strong>
+      <span>
+        or click to choose files. Photos you upload here stay on your device only.
+        Photos added to the site’s images folder are shown to everyone.
+      </span>
+    </div>
+    <input type="file" id="file" accept="image/*" multiple hidden>
+
+    <!-- Search, filter and sort -->
+    <div class="bar">
+      <input type="search" id="q" placeholder="Search captions" aria-label="Search captions">
+      <button class="btn" id="favF" aria-pressed="false">Favorites</button>
+      <button class="btn" id="sortB">Newest first</button>
+      <button class="btn danger" id="clearB">Delete my uploads</button>
+    </div>
+
+    <!-- Photos -->
+    <div class="grid" id="grid"></div>
+
+    <div class="empty" id="empty" hidden>
+      <svg viewBox="0 0 160 100" aria-hidden="true">
+        <circle class="e-sun" cx="118" cy="30" r="14"></circle>
+        <path class="e-far" d="M0 80 L40 36 L70 66 L98 30 L130 70 L160 50 V100 H0 Z"></path>
+        <path class="e-near" d="M0 90 C40 70 90 92 160 74 V100 H0 Z"></path>
+      </svg>
+      <p id="emptyText">No photos to show yet. Upload your first one above.</p>
+    </div>
+
+  </div>
+
+  <!-- Full-screen viewer -->
+  <div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <div class="stage">
+      <button class="nav l" id="prev" aria-label="Previous photo">‹</button>
+      <img id="lbImg" alt="">
+      <button class="nav r" id="next" aria-label="Next photo">›</button>
+    </div>
+
+    <div class="tools">
+      <span class="count" id="count"></span>
+      <input id="capIn" placeholder="Add a caption" aria-label="Caption">
+      <button class="btn" id="zoom">Zoom</button>
+      <button class="btn" id="favB">Favorite</button>
+      <button class="btn" id="dl">Download</button>
+      <button class="btn" id="del">Delete</button>
+      <button class="btn" id="close">Close</button>
+    </div>
+  </div>
+
+  <!-- Small message that appears at the bottom -->
+  <div id="toast" role="status"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

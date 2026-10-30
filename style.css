@@ -1,0 +1,552 @@
+/* ==========================================================================
+   Nature Gallery styles
+   Sections: 1. Theme  2. Base  3. Header  4. Layout  5. Buttons  6. Upload
+             7. Grid  8. Viewer  9. Toast  10. Accessibility
+   ========================================================================== */
+
+
+/* 1. Theme ---------------------------------------------------------------- */
+
+:root {
+  /* Page */
+  --bg: #eef3e8;
+  --surface: #fbfcf7;
+  --ink: #1f3a2e;
+  --ink-soft: #44624f;
+  --muted: #5f7a68;
+  --line: #d3e0cb;
+  --soft: #e2ecd9;
+
+  /* Actions */
+  --accent: #3f7352;
+  --accent-ink: #ffffff;
+  --danger: #b8453a;
+
+  /* Landscape */
+  --sky-top: #cfe6e8;
+  --sky-bottom: #f3f1d5;
+  --sun: #f4c95d;
+  --cloud: rgba(255, 255, 255, 0.85);
+  --hill-1: #a9c9a4;
+  --hill-2: #7fae86;
+  --hill-3: #4f8160;
+  --tree: #2f5d46;
+
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Night theme: follows the device unless the page forces light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1b16;
+    --surface: #16261f;
+    --ink: #e6f0e4;
+    --ink-soft: #b3c9b7;
+    --muted: #93ad9a;
+    --line: #27403a;
+    --soft: #1d3329;
+    --accent: #7fc093;
+    --accent-ink: #0b1a12;
+    --danger: #ff8a7a;
+    --sky-top: #12293a;
+    --sky-bottom: #2b4a50;
+    --sun: #f3e9b8;
+    --cloud: rgba(255, 255, 255, 0.12);
+    --hill-1: #2c5546;
+    --hill-2: #244a3a;
+    --hill-3: #1a3a2d;
+    --tree: #10251c;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0f1b16;
+  --surface: #16261f;
+  --ink: #e6f0e4;
+  --ink-soft: #b3c9b7;
+  --muted: #93ad9a;
+  --line: #27403a;
+  --soft: #1d3329;
+  --accent: #7fc093;
+  --accent-ink: #0b1a12;
+  --danger: #ff8a7a;
+  --sky-top: #12293a;
+  --sky-bottom: #2b4a50;
+  --sun: #f3e9b8;
+  --cloud: rgba(255, 255, 255, 0.12);
+  --hill-1: #2c5546;
+  --hill-2: #244a3a;
+  --hill-3: #1a3a2d;
+  --tree: #10251c;
+  color-scheme: dark;
+}
+
+
+/* 2. Base ----------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+
+/* 3. Header with landscape ------------------------------------------------ */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 280px;
+  margin-bottom: 20px;
+  padding: 28px 24px;
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-text,
+.hero > .btn {
+  position: relative;
+  z-index: 1;
+}
+
+h1 {
+  margin: 0;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: clamp(2.1rem, 6vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.sub {
+  margin: 6px 0 0;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+/* Landscape colors */
+.sky-top {
+  stop-color: var(--sky-top);
+}
+
+.sky-bottom {
+  stop-color: var(--sky-bottom);
+}
+
+.sun {
+  fill: var(--sun);
+}
+
+.sun-glow {
+  fill: var(--sun);
+  opacity: 0.28;
+}
+
+.clouds {
+  fill: var(--cloud);
+  animation: drift 50s ease-in-out infinite alternate;
+}
+
+.hill-1 {
+  fill: var(--hill-1);
+}
+
+.hill-2 {
+  fill: var(--hill-2);
+}
+
+.hill-3 {
+  fill: var(--hill-3);
+}
+
+.tree {
+  fill: var(--tree);
+}
+
+/* The one gentle movement on the page: clouds drifting */
+@keyframes drift {
+  from {
+    transform: translateX(-30px);
+  }
+
+  to {
+    transform: translateX(50px);
+  }
+}
+
+
+/* 4. Layout --------------------------------------------------------------- */
+
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 16px 80px;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.bar input[type="search"] {
+  flex: 1 1 180px;
+  min-width: 0;
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.empty {
+  padding: 36px 10px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.empty svg {
+  width: 160px;
+  margin: 0 auto 8px;
+}
+
+.e-sun {
+  fill: var(--sun);
+}
+
+.e-far {
+  fill: var(--hill-1);
+}
+
+.e-near {
+  fill: var(--hill-3);
+}
+
+
+/* 5. Buttons -------------------------------------------------------------- */
+
+.btn {
+  padding: 9px 18px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.12s, background 0.12s;
+}
+
+.btn:hover {
+  background: var(--soft);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn.primary {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.btn.primary:hover {
+  filter: brightness(1.08);
+}
+
+.btn.on {
+  border-color: var(--accent);
+  background: var(--soft);
+}
+
+.btn.danger {
+  color: var(--danger);
+}
+
+
+/* 6. Upload area ---------------------------------------------------------- */
+
+#drop {
+  margin-bottom: 22px;
+  padding: 24px 16px;
+  border: 2px dashed var(--accent);
+  border-radius: 22px;
+  background: var(--surface);
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#drop.over {
+  background: var(--soft);
+}
+
+#drop .leaf {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 4px;
+  fill: var(--hill-2);
+  stroke: var(--tree);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+#drop strong {
+  display: block;
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.2rem;
+}
+
+#drop span {
+  color: var(--muted);
+}
+
+
+/* 7. Photo grid ----------------------------------------------------------- */
+
+.grid {
+  columns: 3 220px;
+  column-gap: 14px;
+}
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 0 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 18px;
+  background: var(--soft);
+  box-shadow: 0 6px 18px rgba(47, 90, 66, 0.14);
+  overflow: hidden;
+  cursor: zoom-in;
+  break-inside: avoid;
+}
+
+.card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.4s;
+}
+
+.card:hover img {
+  transform: scale(1.04);
+}
+
+.card .cap {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 26px 12px 10px;
+  background: linear-gradient(transparent, rgba(16, 38, 28, 0.75));
+  color: #ffffff;
+  font-size: 0.88rem;
+  text-align: left;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.card:hover .cap,
+.card:focus-visible .cap {
+  opacity: 1;
+}
+
+.heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f3a2e;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.heart.on {
+  color: #d6456b;
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1f3a2e;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+
+/* 8. Full-screen viewer --------------------------------------------------- */
+
+#lb {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  flex-direction: column;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
+  background: rgba(10, 24, 17, 0.94);
+}
+
+#lb.open {
+  display: flex;
+}
+
+#lb .stage {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 12px 48px;
+}
+
+#lb img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: transform 0.2s;
+  touch-action: none;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+
+.nav.l {
+  left: 6px;
+}
+
+.nav.r {
+  right: 6px;
+}
+
+#lb .tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 12px 14px;
+  color: #ffffff;
+}
+
+#lb .tools input {
+  flex: 1 1 200px;
+  max-width: 340px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+#lb .tools input[readonly] {
+  opacity: 0.7;
+}
+
+#lb .tools .btn {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+#lb .count {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+
+/* 9. Toast message -------------------------------------------------------- */
+
+#toast {
+  position: fixed;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  z-index: 30;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 0.2s;
+}
+
+#toast.show {
+  opacity: 1;
+}
+
+
+/* 10. Accessibility ------------------------------------------------------- */
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+
+  .clouds {
+    animation: none;
+  }
+}
